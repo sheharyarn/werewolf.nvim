@@ -2,7 +2,7 @@
 --- Werewolf.nvim ---
 ---------------------
 
-local Utils = require('utils')
+local Utils = require('werewolf.utils')
 local Werewolf = {}
 
 
@@ -26,13 +26,13 @@ local current_theme = nil
 local user_opts = {
   system_theme = {
     on_change = function(theme)
-      vim.o.background = theme
-
       if theme == 'Dark' then
+        vim.o.background = 'dark'
         vim.g.material_style = 'deep ocean'
         vim.cmd('colorscheme material')
         print('Dark theme set!')
       else
+        vim.o.background = 'light'
         vim.g.material_style = 'lighter'
         vim.cmd('colorscheme material')
         print('Light theme set!')
@@ -45,13 +45,21 @@ local user_opts = {
 
 
 
+--- Return the werewolf config currently set
+-- @return table: Current Werewolf config
+Werewolf.config = function()
+  return user_opts
+end
+
+
+
 --- Setup and start Werewolf with the provided config
 -- @param opts table: Config for Werewolf
 -- @return nil
 Werewolf.setup = function(opts)
   -- Merge user options with default config
-  -- user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, opts || {})
-  user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, user_opts || {})
+  -- user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, opts or {})
+  user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, user_opts or {})
 
   -- Track the current theme
   current_theme = user_opts.system_theme.get()
@@ -75,13 +83,13 @@ end
 -- @param force boolean: Run even if theme did not change
 -- @return nil
 Werewolf.run = function(force)
-  if type(user_opts.on_change) == 'function' then
+  if type(user_opts.system_theme.on_change) == 'function' then
     local new_theme = user_opts.system_theme.get()
 
     -- Apply user method if theme changes or forced
     if (force) or (new_theme ~= current_theme) then
       current_theme = new_theme
-      user_opts.on_change(current_theme)
+      user_opts.system_theme.on_change(current_theme)
     end
   end
 end
