@@ -2,74 +2,90 @@
 --- Werewolf.nvim ---
 ---------------------
 
-MACOS_COMMAND = 'defaults read -g AppleInterfaceStyle 2>/dev/null'
+local Utils = require('utils')
+local Werewolf = {}
 
-sleep = function()
-  os.execute("sleep " .. tonumber(1))
-end
 
-get_theme = function()
-  local type = vim.fn.system(MACOS_COMMAND)
-  type = type:gsub('%s+', '');
 
-  if type == 'Dark' then
-    return 'dark'
-  else
-    return 'light'
+-- Default configuration for Werewolf
+local DEFAULT_OPTS = {
+  system_theme = {
+    get = Utils.get_theme,
+    on_change = nil,
+    run_on_start = true,
+    period = 500,
+  },
+}
+
+
+
+-- User configuration currently loaded
+--local user_opts = DEFAULT_OPTS
+local current_theme = nil
+
+local user_opts = {
+  system_theme = {
+    on_change = function(theme)
+      vim.o.background = theme
+
+      if theme == 'Dark' then
+        vim.g.material_style = 'deep ocean'
+        vim.cmd('colorscheme material')
+        print('Dark theme set!')
+      else
+        vim.g.material_style = 'lighter'
+        vim.cmd('colorscheme material')
+        print('Light theme set!')
+      end
+    end,
+
+    period = 200,
+  },
+}
+
+
+
+--- Setup and start Werewolf with the provided config
+-- @param opts table: Config for Werewolf
+-- @return nil
+Werewolf.setup = function(opts)
+  -- Merge user options with default config
+  -- user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, opts || {})
+  user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, user_opts || {})
+
+  -- Track the current theme
+  current_theme = user_opts.system_theme.get()
+
+  -- Run on start if enabled
+  if user_opts.system_theme.run_on_start then
+    Werewolf.run(true)
   end
+
+  -- Start execution loop using vim.loop timer
+  local timer = vim.loop.new_timer()
+  local period = user_opts.system_theme.period
+
+  timer:start(period, period, vim.schedule_wrap(Werewolf.run))
 end
 
-get_theme = function()
-  local handle = io.popen(MACOS_COMMAND)
-  local result = handle:read("*a")
-  handle:close()
-  result = result:gsub('%s+', '')
 
-  if result == 'Dark' then
-    return 'dark'
-  else
-    return 'light'
-  end
-end
 
-on_change = function(theme)
-  vim.o.background = theme
+--- Runs Werewolf manually, applying any configurations based
+-- on the system theme
+-- @param force boolean: Run even if theme did not change
+-- @return nil
+Werewolf.run = function(force)
+  if type(user_opts.on_change) == 'function' then
+    local new_theme = user_opts.system_theme.get()
 
-  if theme == 'dark' then
-    vim.g.material_style = 'deep ocean'
-    vim.cmd('colorscheme material')
-    print('Dark theme set!')
-  else
-    vim.g.material_style = 'lighter'
-    vim.cmd('colorscheme material')
-    print('Light theme set!')
-  end
-end
-on_start = on_change
---on_change=nil
-
--- Create a timer handle (implementation detail: uv_timer_t).
-local timer = vim.loop.new_timer()
-local i = 0
-
-local prev_theme = get_theme()
-print('Initial Theme: '..prev_theme)
-
--- Waits 200ms, then repeats every 1000ms until timer:close().
-timer:start(200, 500, vim.schedule_wrap(function()
-  if type(on_change) == 'function' then
-    local current_theme = get_theme()
-
-    if prev_theme == current_theme then
-      --
-      --print('Theme unchanged')
-    else
-      prev_theme = current_theme
-      on_change(current_theme)
-      --print('Theme changed to '..current_theme)
+    -- Apply user method if theme changes or forced
+    if (force) or (new_theme ~= current_theme) then
+      current_theme = new_theme
+      user_opts.on_change(current_theme)
     end
-  else
-    --
-    print('on_change not a function')
   end
-end))
+end
+
+
+
+return Werewolf;
