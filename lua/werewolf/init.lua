@@ -20,28 +20,8 @@ local DEFAULT_OPTS = {
 
 
 -- User configuration currently loaded
---local user_opts = DEFAULT_OPTS
+local user_opts = DEFAULT_OPTS
 local current_theme = nil
-
-local user_opts = {
-  system_theme = {
-    on_change = function(theme)
-      if theme == 'Dark' then
-        vim.o.background = 'dark'
-        vim.g.material_style = 'deep ocean'
-        vim.cmd('colorscheme material')
-        print('Dark theme set!')
-      else
-        vim.o.background = 'light'
-        vim.g.material_style = 'lighter'
-        vim.cmd('colorscheme material')
-        print('Light theme set!')
-      end
-    end,
-
-    period = 200,
-  },
-}
 
 
 
@@ -58,8 +38,7 @@ end
 -- @return nil
 Werewolf.setup = function(opts)
   -- Merge user options with default config
-  -- user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, opts or {})
-  user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, user_opts or {})
+  user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, opts or {})
 
   -- Track the current theme
   current_theme = user_opts.system_theme.get()
@@ -80,7 +59,7 @@ end
 
 --- Runs Werewolf manually, applying any configurations based
 -- on the system theme
--- @param force boolean: Run even if theme did not change
+-- @param force boolean: If true, runs `on_change` even if theme did not change
 -- @return nil
 Werewolf.run = function(force)
   if type(user_opts.system_theme.on_change) == 'function' then
@@ -96,4 +75,4 @@ end
 
 
 
-return Werewolf;
+return Werewolf
