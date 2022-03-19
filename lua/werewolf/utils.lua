@@ -44,14 +44,30 @@ local default_theme_handlers = {
   end,
 }
 
-Utils.get_theme = function()
+
+
+-- Use a time window as a fallback until proper Linux / Windows implementation
+-- @param table indicating the default time window to use the light theme
+-- @return 'Light' or 'Dark'
+local fallback_handler = function(day_time)
+  local time = tonumber(os.date("%H"))
+  if time >= day_time.from and time < day_time.to then
+    return 'Light'
+  else
+    return 'Dark'
+  end
+end
+
+
+
+Utils.get_theme = function(fallback_day_time)
   local os = Utils.get_os()
   local handler = default_theme_handlers[os]
 
   if type(handler) == 'function' then
     return handler()
   else
-    print('[ERROR] Could not fetch system theme!')
+    return fallback_handler(fallback_day_time)
   end
 end
 
