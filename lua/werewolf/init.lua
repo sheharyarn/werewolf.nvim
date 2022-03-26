@@ -14,7 +14,8 @@ local DEFAULT_OPTS = {
     on_change = nil,
     run_on_start = true,
     period = 500,
-    fallback_day_time = { from = 8, to = 19 },
+    mode = 'system',
+    day_time = { from = 8, to = 20 },
   },
 }
 
@@ -42,8 +43,9 @@ Werewolf.setup = function(opts)
   user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, opts or {})
 
   -- Track the current theme
-  local fallback_day_time = user_opts.system_theme.fallback_day_time
-  current_theme = user_opts.system_theme.get(fallback_day_time)
+  local day_time = user_opts.system_theme.day_time
+  local mode = user_opts.system_theme.mode
+  current_theme = user_opts.system_theme.get(mode, day_time)
 
   -- Run on start if enabled
   if user_opts.system_theme.run_on_start then
@@ -65,8 +67,9 @@ end
 -- @return nil
 Werewolf.run = function(force)
   if type(user_opts.system_theme.on_change) == 'function' then
-    local fallback_day_time = user_opts.system_theme.fallback_day_time
-    local new_theme = user_opts.system_theme.get(fallback_day_time)
+    local day_time = user_opts.system_theme.day_time
+    local mode = user_opts.system_theme.mode
+    local new_theme = user_opts.system_theme.get(mode, day_time)
 
     -- Apply user method if theme changes or forced
     if (force) or (new_theme ~= current_theme) then
