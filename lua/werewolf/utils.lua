@@ -42,16 +42,37 @@ local default_theme_handlers = {
       return 'Light'
     end
   end,
+  -- Use a fixed hour schedule to set the theme
+  -- @param table indicating the default time window to use the light theme
+  -- @return 'Light' or 'Dark'
+  fixed_hours = function(day_time)
+    local time = tonumber(os.date("%H"))
+    if time >= day_time.from and time < day_time.to then
+      return 'Light'
+    else
+      return 'Dark'
+    end
+  end,
 }
 
-Utils.get_theme = function()
-  local os = Utils.get_os()
-  local handler = default_theme_handlers[os]
 
-  if type(handler) == 'function' then
-    return handler()
+
+Utils.get_theme = function(mode, day_time)
+  local handler = nil
+
+  if mode == 'system' then
+    local os = Utils.get_os()
+    handler = default_theme_handlers[os]
+    if type(handler) == 'function' then
+      return handler()
+    else
+      print('[ERROR] Could not fetch system theme!')
+    end
+  elseif mode == 'fixed_hours' then
+    handler = default_theme_handlers['fixed_hours']
+    return handler(day_time)
   else
-    print('[ERROR] Could not fetch system theme!')
+    print("[ERROR] Unsupported mode!")
   end
 end
 
