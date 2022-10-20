@@ -7,7 +7,6 @@ local Werewolf = {}
 
 -- Default configuration for Werewolf
 local DEFAULT_OPTS = {
-  get = Utils.get_theme,
   on_change = nil,
   run_on_start = true,
   period = 500,
@@ -36,6 +35,7 @@ Werewolf.setup = function(opts)
   user_opts = vim.tbl_deep_extend("force", DEFAULT_OPTS, opts or {})
 
   -- Update appearance callback
+  -- @param target_appearance: 'light' | 'dark'
   update_appearance = function(target_appearance)
     -- Apply user method if theme changes
     if target_appearance ~= state.appearance then
@@ -63,11 +63,18 @@ end
 -- @param force boolean: If true, runs `on_change` even if theme did not change
 -- @return nil
 Werewolf.run = function()
-  local day_time = user_opts.day_time
   local mode = user_opts.mode
-  local target_appearance = user_opts.get(mode, day_time)
+  local day_time = user_opts.day_time
+  local handler = nil
 
-  update_appearance(target_appearance)
+  if mode == "system" and Utils.os_uname == "Darwin" then
+    handler = Utils.default_theme_handlers["system"][Utils.os_uname]
+    handler(update_appearance)
+  else
+    -- mode == "fixed_hours" is the fallback
+    handler = Utils.default_theme_handlers["fixed_hours"]
+    handler(day_time, update_appearance)
+  end
 end
 
 return Werewolf

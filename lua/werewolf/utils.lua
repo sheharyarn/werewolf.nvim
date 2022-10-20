@@ -6,22 +6,22 @@ local Utils = {}
 
 --- Returns the OS name
 -- @return string: 'Darwin' | 'Windows' | 'Linux'
-local os_uname = vim.loop.os_uname().sysname
+Utils.os_uname = vim.loop.os_uname().sysname
 
-local default_theme_handlers = {
+Utils.default_theme_handlers = {
   --- Returns the OS theme using default handlers for each OS
   -- @return string: 'light' | 'dark'
   system = {
-    Darwin = function()
+    Darwin = function(update_appearance)
       local command, result
 
       command = "defaults read -g AppleInterfaceStyle 2>/dev/null"
       result = vim.fn.system(command):gsub("%s", "")
 
       if result == "Dark" then
-        return "dark"
+        update_appearance("dark")
       else
-        return "light"
+        update_appearance("light")
       end
     end,
   },
@@ -29,28 +29,15 @@ local default_theme_handlers = {
   -- Use a fixed hour schedule to set the theme
   -- @param table indicating the default time window to use the light theme
   -- @return 'light' or 'dark'
-  fixed_hours = function(day_time)
+  fixed_hours = function(day_time, update_appearance)
     local time = tonumber(os.date("%H"))
 
     if time >= day_time.from and time < day_time.to then
-      return "light"
+      update_appearance("light")
     else
-      return "dark"
+      update_appearance("dark")
     end
   end,
 }
-
-Utils.get_theme = function(mode, day_time)
-  local handler = nil
-
-  if mode == "system" and os_uname == "Darwin" then
-    handler = default_theme_handlers["system"][os_uname]
-    return handler()
-  else
-    -- mode == "fixed_hours" is the fallback
-    handler = default_theme_handlers["fixed_hours"]
-    return handler(day_time)
-  end
-end
 
 return Utils
