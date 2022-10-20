@@ -17,7 +17,9 @@ local DEFAULT_OPTS = {
 
 -- User configuration currently loaded
 local user_opts = DEFAULT_OPTS
-local current_theme = nil
+local state = {
+  appearance = nil, -- 'dark' | 'light'
+}
 
 --- Return the werewolf config currently set
 -- @return table: Current Werewolf config
@@ -35,7 +37,7 @@ Werewolf.setup = function(opts)
   -- Track the current theme
   local day_time = user_opts.day_time
   local mode = user_opts.mode
-  current_theme = user_opts.get(mode, day_time)
+  state.appearance = user_opts.get(mode, day_time)
 
   -- Run on start if enabled
   if user_opts.run_on_start then
@@ -58,12 +60,12 @@ Werewolf.run = function(run_opts)
   if type(user_opts.on_change) == "function" then
     local day_time = user_opts.day_time
     local mode = user_opts.mode
-    local new_theme = user_opts.get(mode, day_time)
+    local target_appearance = user_opts.get(mode, day_time)
 
     -- Apply user method if theme changes or forced
-    if run_opts.force or (new_theme ~= current_theme) then
-      current_theme = new_theme
-      user_opts.on_change(current_theme)
+    if run_opts.force or (target_appearance ~= state.appearance) then
+      state.appearance = target_appearance
+      user_opts.on_change(state.appearance)
     end
   end
 end
