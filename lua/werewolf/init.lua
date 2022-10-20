@@ -20,6 +20,7 @@ local user_opts = DEFAULT_OPTS
 local state = {
   appearance = nil, -- 'dark' | 'light'
 }
+local update_appearance = nil
 
 --- Return the werewolf config currently set
 -- @return table: Current Werewolf config
@@ -33,6 +34,17 @@ end
 Werewolf.setup = function(opts)
   -- Merge user options with default config
   user_opts = vim.tbl_deep_extend("force", DEFAULT_OPTS, opts or {})
+
+  -- Update appearance callback
+  update_appearance = function(target_appearance)
+    -- Apply user method if theme changes
+    if target_appearance ~= state.appearance then
+      state.appearance = target_appearance
+      if type(user_opts.on_change) == "function" then
+        user_opts.on_change(state.appearance)
+      end
+    end
+  end
 
   -- Run on start if enabled
   if user_opts.run_on_start then
@@ -51,17 +63,11 @@ end
 -- @param force boolean: If true, runs `on_change` even if theme did not change
 -- @return nil
 Werewolf.run = function()
-  if type(user_opts.on_change) == "function" then
-    local day_time = user_opts.day_time
-    local mode = user_opts.mode
-    local target_appearance = user_opts.get(mode, day_time)
+  local day_time = user_opts.day_time
+  local mode = user_opts.mode
+  local target_appearance = user_opts.get(mode, day_time)
 
-    -- Apply user method if theme changes or forced
-    if target_appearance ~= state.appearance then
-      state.appearance = target_appearance
-      user_opts.on_change(state.appearance)
-    end
-  end
+  update_appearance(target_appearance)
 end
 
 return Werewolf
