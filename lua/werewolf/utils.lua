@@ -12,16 +12,33 @@ Utils.default_theme_handlers = {
   --- Returns the OS theme using default handlers for each OS
   -- @return string: 'light' | 'dark'
   system = {
-    Darwin = function(update_appearance)
-      local command, result
+    Darwin = function(update_appearance, run_opts)
+      local command = "defaults read -g AppleInterfaceStyle 2>/dev/null" -- Returns "Dark\n" or ""
+      -- may need to check AppleInterfaceStyleSwitchesAutomatically too
+      -- or to run this first: "osascript -e 'tell application \"System Events\" to tell appearance preferences to set dark mode to not dark mode'"
 
-      command = "defaults read -g AppleInterfaceStyle 2>/dev/null"
-      result = vim.fn.system(command):gsub("%s", "")
+      -- Callback to update appearance on command stdout
+      local cb = function(command_output)
+        local result = command_output:gsub("%s", "")
+        if result == "Dark" then
+          update_appearance("dark")
+        else
+          update_appearance("light")
+        end
+      end
 
-      if result == "Dark" then
-        update_appearance("dark")
+      if run_opts.sync then
+        -- run command synchronously (useful on startup)
+        cb(vim.fn.system(command))
       else
-        update_appearance("light")
+        -- run command asynchronously (default behaviour)
+        vim.fn.jobstart(command, {
+          on_stdout = function(_, data, _)
+            -- vim.pretty_print({ j = j, d = data, e = e })
+            cb(data[1] or "")
+          end,
+          stdout_buffered = true,
+        })
       end
     end,
   },

@@ -48,7 +48,9 @@ Werewolf.setup = function(opts)
 
   -- Run on start if enabled
   if user_opts.run_on_start then
-    Werewolf.run()
+    -- should be run synchronously on startup
+    -- to avoid the fast color change "glitch" effect
+    Werewolf.run({ sync = true })
   end
 
   -- Start execution loop using vim.loop timer
@@ -60,16 +62,17 @@ end
 
 --- Runs Werewolf manually, applying any configurations based
 -- on the system theme
--- @param force boolean: If true, runs `on_change` even if theme did not change
+-- @param run_opts table: run options (sync/async)
 -- @return nil
-Werewolf.run = function()
+Werewolf.run = function(run_opts)
+  run_opts = run_opts or { sync = false }
   local mode = user_opts.mode
   local day_time = user_opts.day_time
   local handler = nil
 
   if mode == "system" and Utils.os_uname == "Darwin" then
     handler = Utils.default_theme_handlers["system"][Utils.os_uname]
-    handler(update_appearance)
+    handler(update_appearance, run_opts)
   else
     -- mode == "fixed_hours" is the fallback
     handler = Utils.default_theme_handlers["fixed_hours"]
