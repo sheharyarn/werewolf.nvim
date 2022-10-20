@@ -16,6 +16,7 @@ Utils.default_theme_handlers = {
       local command = "defaults read -g AppleInterfaceStyle 2>/dev/null" -- Returns "Dark\n" or ""
       -- may need to check AppleInterfaceStyleSwitchesAutomatically too
       -- or to run this first: "osascript -e 'tell application \"System Events\" to tell appearance preferences to set dark mode to not dark mode'"
+      -- useful info on osascript: https://scriptingosx.com/2020/09/avoiding-applescript-security-and-privacy-requests/
 
       -- Callback to update appearance on command stdout
       local cb = function(command_output)
