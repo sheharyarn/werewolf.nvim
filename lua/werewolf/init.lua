@@ -34,14 +34,9 @@ Werewolf.setup = function(opts)
   -- Merge user options with default config
   user_opts = vim.tbl_deep_extend("force", DEFAULT_OPTS, opts or {})
 
-  -- Track the current theme
-  local day_time = user_opts.day_time
-  local mode = user_opts.mode
-  state.appearance = user_opts.get(mode, day_time)
-
   -- Run on start if enabled
   if user_opts.run_on_start then
-    Werewolf.run({ force = true })
+    Werewolf.run()
   end
 
   -- Start execution loop using vim.loop timer
@@ -55,15 +50,14 @@ end
 -- on the system theme
 -- @param force boolean: If true, runs `on_change` even if theme did not change
 -- @return nil
-Werewolf.run = function(run_opts)
-  run_opts = run_opts or { force = false }
+Werewolf.run = function()
   if type(user_opts.on_change) == "function" then
     local day_time = user_opts.day_time
     local mode = user_opts.mode
     local target_appearance = user_opts.get(mode, day_time)
 
     -- Apply user method if theme changes or forced
-    if run_opts.force or (target_appearance ~= state.appearance) then
+    if target_appearance ~= state.appearance then
       state.appearance = target_appearance
       user_opts.on_change(state.appearance)
     end
