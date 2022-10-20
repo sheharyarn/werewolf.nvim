@@ -39,7 +39,7 @@ Werewolf.setup = function(opts)
 
   -- Run on start if enabled
   if user_opts.run_on_start then
-    Werewolf.run(true)
+    Werewolf.run({ force = true })
   end
 
   -- Start execution loop using vim.loop timer
@@ -53,14 +53,15 @@ end
 -- on the system theme
 -- @param force boolean: If true, runs `on_change` even if theme did not change
 -- @return nil
-Werewolf.run = function(force)
+Werewolf.run = function(run_opts)
+  run_opts = run_opts or { force = false }
   if type(user_opts.on_change) == "function" then
     local day_time = user_opts.day_time
     local mode = user_opts.mode
     local new_theme = user_opts.get(mode, day_time)
 
     -- Apply user method if theme changes or forced
-    if force or (new_theme ~= current_theme) then
+    if run_opts.force or (new_theme ~= current_theme) then
       current_theme = new_theme
       user_opts.on_change(current_theme)
     end
