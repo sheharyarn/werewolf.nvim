@@ -6,29 +6,29 @@ local Utils = {}
 
 --- Returns the OS name
 -- @return string: 'Darwin' | 'Windows' | 'Linux'
-Utils.get_os = function()
-  return vim.loop.os_uname().sysname
-end
-
---- Returns the OS theme using default handlers for each OS
--- @return string: 'Light' | 'Dark'
+local os_uname = vim.loop.os_uname().sysname
 
 local default_theme_handlers = {
-  -- Default implmentation for macOS
-  Darwin = function()
-    local command = "defaults read -g AppleInterfaceStyle 2>/dev/null"
-    local result = vim.fn.system(command):gsub("%s", "")
+  --- Returns the OS theme using default handlers for each OS
+  -- @return string: 'light' | 'dark'
+  system = {
+    Darwin = function()
+      local command, result
 
-    if result == "Dark" then
-      return "dark"
-    else
-      return "light"
-    end
-  end,
+      command = "defaults read -g AppleInterfaceStyle 2>/dev/null"
+      result = vim.fn.system(command):gsub("%s", "")
+
+      if result == "Dark" then
+        return "dark"
+      else
+        return "light"
+      end
+    end,
+  },
 
   -- Use a fixed hour schedule to set the theme
   -- @param table indicating the default time window to use the light theme
-  -- @return 'Light' or 'Dark'
+  -- @return 'light' or 'dark'
   fixed_hours = function(day_time)
     local time = tonumber(os.date("%H"))
 
@@ -40,24 +40,16 @@ local default_theme_handlers = {
   end,
 }
 
-local is_macos = vim.fn.has("mac")
-
 Utils.get_theme = function(mode, day_time)
   local handler = nil
 
-  if mode == "system" and is_macos then
-    local os = Utils.get_os()
-    handler = default_theme_handlers[os]
-    if type(handler) == "function" then
-      return handler()
-    else
-      print("[ERROR] Could not fetch system theme!")
-    end
-  else -- elseif mode == 'fixed_hours' then
+  if mode == "system" and os_uname == "Darwin" then
+    handler = default_theme_handlers["system"][os_uname]
+    return handler()
+  else
+    -- mode == "fixed_hours" is the fallback
     handler = default_theme_handlers["fixed_hours"]
     return handler(day_time)
-    -- else
-    --   print("[ERROR] Unsupported mode!")
   end
 end
 
