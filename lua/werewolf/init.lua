@@ -12,6 +12,7 @@ local DEFAULT_OPTS = {
   period = 500,
   mode = "system",
   day_time = { from = 8, to = 20 },
+  location = "#Paris, FR",
 }
 
 -- User configuration currently loaded
@@ -60,6 +61,7 @@ Werewolf.setup = function(opts)
   timer:start(period, period, vim.schedule_wrap(Werewolf.run))
 end
 
+local sunshine_executable = vim.fn.executable("sunshine")
 --- Runs Werewolf manually, applying any configurations based
 -- on the system theme
 -- @param run_opts table: run options (sync/async)
@@ -73,6 +75,9 @@ Werewolf.run = function(run_opts)
   if mode == "system" and Utils.os_uname == "Darwin" then
     handler = Utils.default_theme_handlers["system"][Utils.os_uname]
     handler(update_appearance, run_opts)
+  elseif mode == "sunshine" and sunshine_executable then
+    handler = Utils.default_theme_handlers["sunshine"]
+    handler(user_opts.location, update_appearance, run_opts)
   else
     -- mode == "fixed_hours" is the fallback
     handler = Utils.default_theme_handlers["fixed_hours"]
