@@ -2,77 +2,87 @@
 --- Werewolf.nvim ---
 ---------------------
 
-local Utils = require('werewolf.utils')
+local Utils = require("werewolf.utils")
 local Werewolf = {}
-
-
 
 -- Default configuration for Werewolf
 local DEFAULT_OPTS = {
-  system_theme = {
-    get = Utils.get_theme,
-    on_change = nil,
-    run_on_start = true,
-    period = 500,
-  },
+	on_change = nil,
+	run_on_start = true,
+	period = 500,
+	mode = "system",
+	day_time = { from = 8, to = 20 },
+	location = "#Paris, FR",
 }
-
-
 
 -- User configuration currently loaded
 local user_opts = DEFAULT_OPTS
-local current_theme = nil
-
-
+local state = {
+	appearance = nil, -- 'dark' | 'light'
+}
+local update_appearance = nil
 
 --- Return the werewolf config currently set
 -- @return table: Current Werewolf config
 Werewolf.config = function()
-  return user_opts
+	return user_opts
 end
-
-
 
 --- Setup and start Werewolf with the provided config
 -- @param opts table: Config for Werewolf
 -- @return nil
 Werewolf.setup = function(opts)
-  -- Merge user options with default config
-  user_opts = vim.tbl_deep_extend('force', DEFAULT_OPTS, opts or {})
+	-- Merge user options with default config
+	user_opts = vim.tbl_deep_extend("force", DEFAULT_OPTS, opts or {})
 
-  -- Track the current theme
-  current_theme = user_opts.system_theme.get()
+	-- Update appearance callback
+	-- @param target_appearance: 'light' | 'dark'
+	update_appearance = function(target_appearance)
+		-- Apply user method if theme changes
+		if target_appearance ~= state.appearance then
+			state.appearance = target_appearance
+			if type(user_opts.on_change) == "function" then
+				user_opts.on_change(state.appearance)
+			end
+		end
+	end
 
-  -- Run on start if enabled
-  if user_opts.system_theme.run_on_start then
-    Werewolf.run(true)
-  end
+	-- Run on start if enabled
+	if user_opts.run_on_start then
+		-- should be run synchronously on startup
+		-- to avoid the fast color change "glitch" effect
+		Werewolf.run({ sync = true })
+	end
 
-  -- Start execution loop using vim.loop timer
-  local timer = vim.loop.new_timer()
-  local period = user_opts.system_theme.period
+	-- Start execution loop using vim.loop timer
+	local timer = vim.loop.new_timer()
+	local period = user_opts.period
 
-  timer:start(period, period, vim.schedule_wrap(Werewolf.run))
+	timer:start(period, period, vim.schedule_wrap(Werewolf.run))
 end
 
-
-
+local sunshine_executable = vim.fn.executable("sunshine") ~= 0
 --- Runs Werewolf manually, applying any configurations based
 -- on the system theme
--- @param force boolean: If true, runs `on_change` even if theme did not change
+-- @param run_opts table: run options (sync/async)
 -- @return nil
-Werewolf.run = function(force)
-  if type(user_opts.system_theme.on_change) == 'function' then
-    local new_theme = user_opts.system_theme.get()
+Werewolf.run = function(run_opts)
+	run_opts = run_opts or { sync = false }
+	local mode = user_opts.mode
+	local day_time = user_opts.day_time
+	local handler = nil
 
-    -- Apply user method if theme changes or forced
-    if (force) or (new_theme ~= current_theme) then
-      current_theme = new_theme
-      user_opts.system_theme.on_change(current_theme)
-    end
-  end
+	if mode == "system" and Utils.os_uname == "Darwin" then
+		handler = Utils.default_theme_handlers["system"][Utils.os_uname]
+		handler(update_appearance, run_opts)
+	elseif mode == "sunshine" and sunshine_executable then
+		handler = Utils.default_theme_handlers["sunshine"]
+		handler(user_opts.location, update_appearance, run_opts)
+	else
+		-- mode == "fixed_hours" is the fallback
+		handler = Utils.default_theme_handlers["fixed_hours"]
+		handler(day_time, update_appearance)
+	end
 end
-
-
 
 return Werewolf
