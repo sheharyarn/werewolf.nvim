@@ -50,14 +50,14 @@ local default_theme_handlers = {
       local command = [[gdbus call --session --timeout=1000 \
                         --dest=org.freedesktop.portal.Desktop \
                         --object-path /org/freedesktop/portal/desktop \
-                        --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance color-scheme]]
+                        --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance color-scheme 2>&1]]
       local result = Utils.run_command(command)
       if string.find(result, "(<<uint32 1>>,)") ~= nil then
         return "Dark"
       end
     end
 
-    -- We didn't find gdbus so assume light mode
+    -- We didn't find gdbus or the command failed so assume light mode
     return "Light"
   end
 }
