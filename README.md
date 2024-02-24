@@ -2,7 +2,7 @@
 
 > Run custom code on your code editor without worry 🙌
 
-`werewolf` is a handy extension that lets you run your own custom code irrespective of the time of day or the theme of the editor. 
+`werewolf` is a handy extension that lets you change theme or run custom code depending on the time of day or the theme of the editor. 
 
 <br>
 
