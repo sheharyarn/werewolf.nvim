@@ -1,9 +1,10 @@
-WereWolf.nvim
+# WereWolf.nvim
 
-Run custom code on your code editor without worry 🙌
+> Run custom code on your code editor without worry 🙌
 
-WereWolf is a handy extension that lets you run your own custom code irrespective of the time of day or the theme of the editor. 
+`WereWolf` is a handy extension that lets you run your own custom code irrespective of the time of day or the theme of the editor. 
 
+<br>
 
 Contributing
 Fork, Enhance, Send PR
