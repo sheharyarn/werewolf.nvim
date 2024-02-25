@@ -1,8 +1,8 @@
 # Werewolf.nvim
 
-> Automatically change dark and light themes in Neovim
+> Apply custom Neovim configs based on system theme
 
-`werewolf.nvim` is a handy neovim plugin that lets you change the theme or run custom code depending on the time of day or the system theme
+`werewolf.nvim` is a handy neovim plugin that automatically changes the theme, apply configs or run custom code depending on the system theme or the time of day. This plugin actively listens for changes, so it can apply configs at runtime when the system theme changes from light to dark or vice versa, without needing to restart Neovim.
 
 <br>
 
