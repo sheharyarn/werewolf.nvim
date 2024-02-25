@@ -42,6 +42,24 @@ local default_theme_handlers = {
       return 'Light'
     end
   end,
+
+  Linux = function()
+    -- Freedesktop portal doc
+    -- https://github.com/flatpak/xdg-desktop-portal/blob/d7a304a00697d7d608821253cd013f3b97ac0fb6/data/org.freedesktop.impl.portal.Settings.xml#L33-L45
+    if vim.fn.executable("gdbus") then
+      local command = [[gdbus call --session --timeout=1000 \
+                        --dest=org.freedesktop.portal.Desktop \
+                        --object-path /org/freedesktop/portal/desktop \
+                        --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance color-scheme 2>&1]]
+      local result = Utils.run_command(command)
+      if string.find(result, "(<<uint32 1>>,)") ~= nil then
+        return "Dark"
+      end
+    end
+
+    -- We didn't find gdbus or the command failed so assume light mode
+    return "Light"
+  end
 }
 
 Utils.get_theme = function()
