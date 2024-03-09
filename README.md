@@ -10,8 +10,8 @@
   <b>Apply custom Neovim configs based on system theme 🔆 🌑</b>
 </div>
 
+<br>
 
-> 
 
 
 Werewolf is a handy neovim plugin that automatically changes the
