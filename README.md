@@ -125,13 +125,18 @@ See [another example here][dotfiles-example].
 ## License
 
 This package is available as open source under the terms of
-the [MIT License][license].
+the [MIT License][license-mit].
+
+The Werewolf logo/image has been generated using OpenAI's
+DALL-E and does not have any copyrights, effectively being
+[CC0][license-cc0].
 
 <br>
 
 
 
   [github-fork]:      https://github.com/sheharyarn/werewolf.nvim/fork
-  [license]:          https://opensource.org/licenses/MIT
+  [license-mit]:      https://opensource.org/licenses/MIT
+  [license-cc0]:      https://creativecommons.org/public-domain/cc0/
 
   [dotfiles-example]: https://github.com/sheharyarn/dotfiles/blob/7a5f6ac7adde7c1d97bfb1af8d79b51904f1b364/Vim/init.lua#L54-L68
