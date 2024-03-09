@@ -1,4 +1,5 @@
-<img src='doc/logo.png' width='350px' />
+<div align="center">
+  <img src='doc/logo.png' width='150px' />
 
 # Werewolf.nvim
 
@@ -6,10 +7,14 @@
 ![Lua](https://img.shields.io/badge/lua-%232C2D72.svg?style=for-the-badge&logo=lua&logoColor=white)
 ![LICENSE](https://shields.io/badge/LICENSE-MIT-orange?style=for-the-badge)
 
+  <b>Apply custom Neovim configs based on system theme 🔆 🌑</b>
+</div>
 
-> Apply custom Neovim configs based on system theme
 
-`werewolf.nvim` is a handy neovim plugin that automatically changes the
+> 
+
+
+Werewolf is a handy neovim plugin that automatically changes the
 theme, apply configs or run custom code depending on the system theme or
 the time of day. This plugin actively listens for changes, so it can
 apply configs at runtime when the system theme changes from light to
