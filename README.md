@@ -1,3 +1,5 @@
+<img src='doc/logo.png' width='350px' />
+
 # Werewolf.nvim
 
 ![Neovim](https://img.shields.io/badge/Neovim-%2357A143?NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)
@@ -7,7 +9,11 @@
 
 > Apply custom Neovim configs based on system theme
 
-`werewolf.nvim` is a handy neovim plugin that automatically changes the theme, apply configs or run custom code depending on the system theme or the time of day. This plugin actively listens for changes, so it can apply configs at runtime when the system theme changes from light to dark or vice versa, without needing to restart Neovim.
+`werewolf.nvim` is a handy neovim plugin that automatically changes the
+theme, apply configs or run custom code depending on the system theme or
+the time of day. This plugin actively listens for changes, so it can
+apply configs at runtime when the system theme changes from light to
+dark or vice versa, without needing to restart Neovim.
 
 <br>
 
@@ -37,10 +43,9 @@ use 'sheharyarn/werewolf.nvim'
 ## Default Options
 
 By default, `werewolf` does not apply any custom code/theme on
-system theme change or other events.
-
-Any options passed to `setup()` will be merged with these
-default options before being applied.
+system theme change or other events. Any options passed to
+`setup()` will be merged with these default options before being
+applied.
 
 ```lua
 {
@@ -114,7 +119,8 @@ See [another example here][dotfiles-example].
 
 ## License
 
-This package is available as open source under the terms of the [MIT License][license].
+This package is available as open source under the terms of
+the [MIT License][license].
 
 <br>
 
