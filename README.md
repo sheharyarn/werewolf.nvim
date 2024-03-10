@@ -20,12 +20,23 @@ the time of day. This plugin actively listens for changes, so it can
 apply configs at runtime when the system theme changes from light to
 dark or vice versa, without needing to restart Neovim.
 
+Inspired by [`werewolf.vim`][werewolf-vim].
+
 <br>
 
 
+
 <div align="center">
-  <img src='doc/demo.gif' style="max-width: 600px;" />
+  <img src='doc/demo.gif' />
+
+  <sub>
+    (Term: <a href="https://github.com/alacritty/alacritty">Alacritty</a> • 
+    Themes: <a href="https://github.com/marko-cerovac/material.nvim">Material</a> 
+    & <a href="https://github.com/maxmx03/solarized.nvim">Solarized</a> • 
+    Config: <a href="https://github.com/sheharyarn/dotfiles/blob/7a5f6ac7adde7c1d97bfb1af8d79b51904f1b364/Vim/lua/themes.lua#L77">Dotfiles</a>)
+  </sub>
 </div>
+
 
 <br>
 
@@ -81,6 +92,8 @@ In your `init.lua`, add the following:
 require('werewolf').setup({
   system_theme = {
     on_change = function(theme)
+      -- Apply custom config based on new `theme` value
+
       if theme == 'Dark' then
         vim.g.material_style = 'deep ocean'
         vim.o.background = 'dark'
@@ -90,9 +103,11 @@ require('werewolf').setup({
         vim.o.background = 'light'
         vim.cmd('colorscheme material')
       end
+
     end,
 
-    period = 200,  -- Optionally change the theme check interval from default of `500` ms
+    -- Change the check interval (optional)
+    period = 200,
   },
 })
 ```
@@ -110,7 +125,7 @@ else
 end
 ```
 
-See [another example here][dotfiles-example].
+Also [see this example][dotfiles-config] from my [dotfiles][dotfiles].
 
 
 
@@ -146,4 +161,7 @@ DALL-E and does not have any copyrights, effectively being
   [license-mit]:      https://opensource.org/licenses/MIT
   [license-cc0]:      https://creativecommons.org/public-domain/cc0/
 
-  [dotfiles-example]: https://github.com/sheharyarn/dotfiles/blob/7a5f6ac7adde7c1d97bfb1af8d79b51904f1b364/Vim/init.lua#L54-L68
+  [dotfiles]:         https://github.com/sheharyarn/dotfiles
+  [dotfiles-config]:  https://github.com/sheharyarn/dotfiles/blob/7a5f6ac7adde7c1d97bfb1af8d79b51904f1b364/Vim/init.lua#L54-L68
+
+  [werewolf-vim]:     https://github.com/jonstoler/werewolf.vim
