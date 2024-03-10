@@ -23,6 +23,13 @@ dark or vice versa, without needing to restart Neovim.
 <br>
 
 
+<div align="center">
+  <img src='doc/demo.gif' style="max-width: 600px;" />
+</div>
+
+<br>
+
+
 
 ## Installation
 
