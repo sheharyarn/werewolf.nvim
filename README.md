@@ -20,8 +20,6 @@ the time of day. This plugin actively listens for changes, so it can
 apply configs at runtime when the system theme changes from light to
 dark or vice versa, without needing to restart Neovim.
 
-Inspired by [`werewolf.vim`][werewolf-vim].
-
 <br>
 
 
@@ -63,7 +61,7 @@ use 'sheharyarn/werewolf.nvim'
 ## Configuration
 
 
-## Default Options
+### Default Options
 
 By default, `werewolf` does not apply any custom code/theme on
 system theme change or other events. Any options passed to
@@ -82,7 +80,7 @@ applied.
 ```
 
 
-## Apply Neovim theme on system theme change
+### Apply Neovim theme on system theme change
 
 In your `init.lua`, add the following:
 
