@@ -14,11 +14,11 @@
 
 
 
-Werewolf is a handy neovim plugin that automatically changes the
-theme, apply configs or run custom code depending on the system theme or
-the time of day. This plugin actively listens for changes, so it can
-apply configs at runtime when the system theme changes from light to
-dark or vice versa, without needing to restart Neovim.
+Werewolf is a handy neovim plugin that automatically changes the theme,
+applies configs or runs other custom code depending on the system theme
+or the time of day. It actively listens for changes, so it can do this
+at runtime when the system theme changes from light to dark or vice
+versa, without needing to restart Neovim.
 
 <br>
 
